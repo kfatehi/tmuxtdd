@@ -1,0 +1,89 @@
+#!/usr/bin/env node
+var args = require('minimist')(process.argv);
+var spawn = require('child_process').spawn;
+var chokidar = require('chokidar');
+var homedir = require('homedir');
+var path = require('path');
+
+var fs = require('fs');
+
+var DEFAULT_STATE = {}
+
+var SAVE_FILE = homedir()+'/.tmuxtdd.json';
+
+
+function save(obj) {
+  return fs.writeFileSync(SAVE_FILE, JSON.stringify(obj));
+}
+
+function printStatus(status) {
+  try {
+    switch (JSON.parse(fs.readFileSync(SAVE_FILE)).status) {
+      case 'passing':
+        return process.stdout.write('#[bg=green]#[fg=black] Tests passing ');
+      case 'failing':
+        return process.stdout.write('#[bg=red]#[fg=black] Tests failing ');
+      default: 
+        return process.stdout.write('#[bg=black]#[fg=grey] ... ');
+    }
+  } catch (e) {
+    return null;
+  }
+}
+
+var busy = false;
+
+function runTests() {
+  if (busy) return null;
+  busy = true;
+  save(DEFAULT_STATE);
+  var proc = spawn('npm', ['test'], {stdio: "inherit"});
+  proc.on('exit', function(status) {
+    save({ status: status === 0 ? 'passing' : 'failing' });
+    busy = false;
+  });
+}
+
+function startRunner(watch) {
+  console.log('Starting runner');
+  if (watch) {
+    var watchPattern = watch.split(',');
+    console.log('Watching with pattern:', watchPattern);
+    var watcher = chokidar.watch(watchPattern, {
+      ignored: /[\/\\]\./,
+      persistent: true
+    });
+    watcher
+    .on('add', runTests)
+    .on('change', runTests)
+    .on('unlink', runTests)
+  } else {
+    runTests()
+  }
+}
+
+function sourceTmuxConfig(filepath, callback) {
+  console.log('Sourcing tmux config '+filepath);
+  var proc = spawn('tmux', ['source-file', filepath], {stdio: "inherit"});
+  proc.on('exit', function(status) {
+    if (callback) {
+      if (status === 0) return callback();
+      else return callback(new Error('Non-zero exit status'));
+    }
+  })
+}
+
+if (args.status) {
+  printStatus()
+} else {
+  var originalConf = path.resolve(homedir(), '.tmux.conf');
+  var tmuxConf = path.resolve(__dirname, '..', 'tmux-tdd.conf');
+  sourceTmuxConfig(tmuxConf, function(err) {
+    if (err) throw err;
+    process.on('exit', function() {
+      sourceTmuxConfig(originalConf)
+    });
+    process.on('SIGINT', process.exit);
+    startRunner(args.watch)
+  })
+}
