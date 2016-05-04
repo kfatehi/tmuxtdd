@@ -1,6 +1,6 @@
 {
   "name": "tmuxtdd",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "reports test runner status in the tmux status bar by watching your files and executing your tests for you when they change",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,7 @@
   { "type" : "git"
     , "url" : "https://github.com/kfatehi/tmuxtdd.git"
   },
-  { "url" : "https://github.com/kfatehi/tmuxtdd/issues"
+  "bugs": { "url" : "https://github.com/kfatehi/tmuxtdd/issues"
     , "email" : "keyvanfatehi@gmail.com"
   },
   "dependencies": {
