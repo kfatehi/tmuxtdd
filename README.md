@@ -24,4 +24,4 @@ As a result, tmux becomes aware of your tests so you can keep your tests running
 
 Go to any node project and run a command such as this. You must have a `test` script defined in `package.json` because `tmuxtdd` is hardcoded to run `npm test`.
 
-`tmuxtdd --watch src/**/*.js,test/**/*.js`
+`tmuxtdd --watch 'src/**/*.js,test/**/*.js'`
