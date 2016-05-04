@@ -1,5 +1,7 @@
 # tmuxtdd
 
+![tmuxtdd](https://raw.githubusercontent.com/kfatehi/tmuxtdd/master/demo.gif)
+
 ## what
 
 A program that runs your test suite for you, capturing its exit status. It uses chokidar to watch files with respect to the glob pattern you pass in with `--watch`. By passing in `--status` you can query this status, however the output is designed for tmux.
