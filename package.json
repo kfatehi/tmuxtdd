@@ -10,16 +10,19 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "repository" :
-  { "type" : "git"
-    , "url" : "https://github.com/kfatehi/tmuxtdd.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kfatehi/tmuxtdd.git"
   },
-  "bugs": { "url" : "https://github.com/kfatehi/tmuxtdd/issues"
-    , "email" : "keyvanfatehi@gmail.com"
+  "bugs": {
+    "url": "https://github.com/kfatehi/tmuxtdd/issues",
+    "email": "keyvanfatehi@gmail.com"
   },
   "dependencies": {
     "chokidar": "^1.4.3",
     "homedir": "^0.6.0",
-    "minimist": "^1.2.0"
+    "is-running": "^2.0.0",
+    "minimist": "^1.2.0",
+    "tree-kill": "^1.0.0"
   }
 }
