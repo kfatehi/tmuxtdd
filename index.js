@@ -14,13 +14,15 @@ function getStatusLine(status) {
     case 'failing':
       return '#[bg=red]#[fg=black] FAIL ';
     default: 
-      return '#[bg=black]#[fg=grey] ... ';
+      return '#[bg=black]#[fg=grey] BUSY ';
   }
 }
 
 function update(state) {
   var statusLine = getStatusLine(state.status);
-  return spawn('tmux', ['set-option', '-g', 'status-left', statusLine], { stdio: 'inherit' })
+  var args = ['set-option', '-g', 'status-left', statusLine];
+  //var args = ['rename-window', statusLine];
+  return spawn('tmux', args, { stdio: 'inherit' });
 }
 
 
