@@ -1,8 +1,6 @@
 # tmuxtdd
 
-reports test runner status in the tmux status bar by watching your files and executing your tests for you when they change
-
-**please note the program has changed significantly since this gif**
+updates tmux window title with the status of a command which executes when your files change, such as your test suite, or a server (use --kill to auto-kill and restart long running processes like servers)
 
 ![tmuxtdd](https://raw.githubusercontent.com/kfatehi/tmuxtdd/master/demo.gif)
 
