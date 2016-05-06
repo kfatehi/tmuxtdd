@@ -4,23 +4,6 @@ var app = require('..');
 var path = require('path');
 var fs = require('fs');
 
-function run(args) {
-  var watch = args.w || args.watch;
-  var cmd = args.c || args.cmd;
-  if (!cmd) {
-    console.log('You must specify a command using -c or --cmd');
-    process.exit(1)
-  }
-  var autoKill = args.k || args.kill || false;
-  app.startRunner(watch, 'bash', ['-c', cmd], autoKill);
-}
-
-function help() {
-  fs.createReadStream(path.resolve(__dirname, '..', 'help.txt'))
-  .pipe(process.stdout)
-  .on('done', process.exit)
-}
-
 function main(args) {
   if (args.h || args.help) {
     return help();
@@ -30,8 +13,22 @@ function main(args) {
     case 'run':
       return run(args);
     default:
-      return help();
+      return fs.createReadStream(
+        path.resolve(__dirname, '..', 'help.txt')
+      ).pipe(process.stdout).on('done', process.exit)
   }
+}
+
+function run(args) {
+  var watch = args.w || args.watch;
+  var cmd = args.c || args.cmd;
+  var format = args.f || args.fmt;
+  if (!cmd) {
+    console.log('You must specify a command using -c or --cmd');
+    process.exit(1)
+  }
+  var autoKill = args.k || args.kill || false;
+  app.startRunner(watch, 'bash', ['-c', cmd], autoKill, format);
 }
 
 main(args);

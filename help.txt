@@ -1,10 +1,18 @@
-usage: tmuxtdd [--help] [--watch=<pattern[,pattern]>] [--kill]
+usage: tmuxtdd [--help] [--watch=<pattern[,pattern]>] [--kill] [--fmt]
   <command> [args]
 
 example usage for a javascript test suite:
 
-  tmuxtdd run --watch 'src/**/*.js,test/**/*.js' --cmd 'npm test'
+  tmuxtdd run --watch={src,test}/**/*.js --cmd 'npm test'
 
 example usage for a long-running process (i.e. a server)
 
-  tmuxtdd run --watch 'src/**/*.js' --cmd 'npm start' --kill
+  tmuxtdd run --watch=src/**/*.js --cmd 'npm start' --kill
+
+you can provide custom formatting using --fmt for example
+
+  --fmt='tests S{run,pass,fail}'
+
+you can use tmux semantics here, such as color
+
+  --fmt='tests S{#[fg=yellow]run,#[fg=green]pass,#[fg=red]fail}'

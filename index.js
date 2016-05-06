@@ -6,11 +6,11 @@ var path = require('path');
 var createRunner = require('./src/runner');
 var tmux = require('./src/tmux');
 
-module.exports.startRunner = function(watch, cmd, args, autoKill) {
+module.exports.startRunner = function(watch, cmd, args, autoKill, format) {
   tmux.getInfo().spread(function(paneId, windowId, originalWindowName) {
     var tmuxWindow = tmux.target(windowId);
 
-    var runner = createRunner(tmuxWindow, cmd, args, autoKill)
+    var runner = createRunner(tmuxWindow, cmd, args, autoKill, format)
 
     process.on('exit', function() {
       tmuxWindow.setName(originalWindowName, function() {
@@ -22,8 +22,7 @@ module.exports.startRunner = function(watch, cmd, args, autoKill) {
     process.on('SIGINT', process.exit);
 
     if (watch) {
-      var watchPattern = watch.split(',');
-      var watcher = chokidar.watch(watchPattern, {
+      var watcher = chokidar.watch(watch, {
         ignored: /[\/\\]\./,
         persistent: true
       });
