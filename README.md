@@ -2,17 +2,9 @@
 
 reports test runner status in the tmux status bar by watching your files and executing your tests for you when they change
 
+**please note the program has changed significantly since this gif**
+
 ![tmuxtdd](https://raw.githubusercontent.com/kfatehi/tmuxtdd/master/demo.gif)
-
-## why
-
-I wrote this program in order to see if I prefer using multiple tmux windows with information shared via status bar as opposed to a single tmux window with a pane for vim and a pane for the test runner.
-
-## how
-
-tmuxtdd reports test runner status in the status bar in this way:
-
-`tmux set-option -g status-left "Tests Passing"`
 
 ## installation
 
@@ -20,6 +12,4 @@ tmuxtdd reports test runner status in the status bar in this way:
 
 ## usage
 
-example usage for a javascript project:
-
-`tmuxtdd run --watch 'src/**/*.js,test/**/*.js' --cmd 'npm test'`
+see help.txt
