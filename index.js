@@ -3,23 +3,37 @@ var chokidar = require('chokidar');
 var homedir = require('homedir');
 var fs = require('fs');
 var path = require('path');
-var runner = require('./src/runner');
+var createRunner = require('./src/runner');
+var tmux = require('./src/tmux');
 
 module.exports.startRunner = function(watch, cmd, args, autoKill) {
-  console.log('Starting runner');
-  var runTests = runner(cmd, args, autoKill)
-  if (watch) {
-    var watchPattern = watch.split(',');
-    console.log('Watching with pattern:', watchPattern);
-    var watcher = chokidar.watch(watchPattern, {
-      ignored: /[\/\\]\./,
-      persistent: true
+  var runner = createRunner(cmd, args, autoKill)
+
+  tmux.getName(function(err, windowName) {
+    if (err) throw err;
+
+    process.on('exit', function() {
+      tmux.setName(windowName, function() {
+        process.removeAllListeners('exit');
+        process.exit();
+      });
     });
-    watcher
-    .on('add', runTests)
-    .on('change', runTests)
-    .on('unlink', runTests)
-  } else {
-    runTests()
-  }
+
+    process.on('SIGINT', process.exit);
+
+    if (watch) {
+      var watchPattern = watch.split(',');
+      var watcher = chokidar.watch(watchPattern, {
+        ignored: /[\/\\]\./,
+        persistent: true
+      });
+
+      watcher
+      .on('add', runner.run)
+      .on('change', runner.run)
+      .on('unlink', runner.run)
+    } else {
+      runner.run()
+    }
+  });
 }

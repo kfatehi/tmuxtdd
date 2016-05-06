@@ -2,61 +2,48 @@ var tmux = require('./tmux');
 var kill = require('tree-kill');
 var spawn = require('child_process').spawn;
 var isRunning = require('is-running');
+var inhibitor = require('./inhibitor');
+var chalk = require('chalk');
 
-module.exports = function(cmd, args, autoKill) {
+function running(proc) {
+  return proc && isRunning(proc.pid);
+}
+
+module.exports = function (cmd, args, autoKill) {
   var proc = null;
-  var timestamp = null
-
-  function tooQuick() {
-    var minDurationMilliseconds = 1000
-    var now = new Date()
-    if (timestamp) {
-      var diff = now - timestamp;
-      console.log(diff);
-      // allow time for multiple events to settle
-      // if an event came in too quickly after the last one, ignore it
-      if (diff < minDurationMilliseconds)
-        return true;
-    }
-    timestamp = now;
-    return false;
-  }
+  var tooQuick = inhibitor(1000);
 
   function createProc() {
-    tmux.update({ status: 'proc' }).on('exit', function() {
-      console.log('proc set');
+    tmux.setName('running', function(err) {
+      if (err) throw err;
       proc = spawn(cmd, args, { stdio: 'inherit' });
       proc.on('exit', function(status) {
-        tmux.update({ status: status === 0 ? 'passing' : 'failing' }).on('exit', function() {
+        var str = status === 0 ? 'passing' : 'failing';
+        tmux.setName(str, function() {
+          if (err) throw err;
           proc = null;
         })
       });
     });
   }
 
-  function running() {
-    console.log('proc set?', !!proc);
-    return proc && isRunning(proc.pid);
-  }
-
-  return function() {
-    if (tooQuick()) return false;
-
-    if (running()) {
-      if (autoKill) {
-        console.log('killing');
-        proc.removeAllListeners('exit');
-        kill(proc.pid, 'SIGTERM', function(err) {
-          if (err) throw err;
-          console.log('killed');
-          proc = null;
-          createProc();
-        })
+  return {
+    run: function() {
+      if (tooQuick()) return false;
+      if (running(proc)) {
+        if (autoKill) {
+          proc.removeAllListeners('exit');
+          kill(proc.pid, 'SIGTERM', function(err) {
+            if (err) throw err;
+            proc = null;
+            createProc();
+          })
+        } else {
+          return;
+        }
       } else {
-        return;
+        createProc();
       }
-    } else {
-      createProc();
     }
   }
 }
