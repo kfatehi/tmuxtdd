@@ -1,10 +1,15 @@
 cd ~/Workspace/tmuxtdd
-ttystudio output.gif --log
+
+ttystudio demo.gif --log
+
 cd ~/Workspace/voting-server
-tmux
-tmux new-window
+
 vim src/reducer.js
-tmuxtdd run --watch={src,test}/**/*.js --cmd 'npm test' --fmt='tests S{#[bg=yellow]ON,#[bg=green]OK,#[bg=red]FAIL}'
+
+tmuxtdd run --watch={src,test}/**/*.js --cmd='npm test' --fmt='tests S{#[bg=yellow]ON,#[bg=green]OK,#[bg=red]FAIL}'
+
+tmuxtdd run --watch=src/**/*.js --kill --cmd='npm start' --fmt='server S{#[bg=green]ON,#[bg=red]OFF,#[bg=red]ERR}'
+
 
 (look at the test window)
 (fix it, look at test window)
