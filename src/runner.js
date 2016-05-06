@@ -10,25 +10,31 @@ function running(proc) {
 
 module.exports = function (tmuxWindow, cmd, args, autoKill) {
   var proc = null;
+  var creating = null;
   var tooQuick = inhibitor(1000);
 
+  function crashOut(err) {
+    console.log(err.stack);
+    process.exit(1);
+  }
+
   function createProc() {
-    tmuxWindow.setName('running', function(err) {
-      if (err) throw err;
+    creating = true;
+    tmuxWindow.setName('running').then(function() {
       proc = spawn(cmd, args, { stdio: 'inherit' });
+      creating = false;
       proc.on('exit', function(status) {
         var str = status === 0 ? 'passing' : 'failing';
-        tmuxWindow.setName(str, function() {
-          if (err) throw err;
+        tmuxWindow.setName(str).then(function() {
           proc = null;
-        })
+        }).catch(crashOut)
       });
-    });
+    }).catch(crashOut)
   }
 
   return {
     run: function() {
-      if (tooQuick()) return false;
+      if (creating || tooQuick()) return false;
       if (running(proc)) {
         if (autoKill) {
           proc.removeAllListeners('exit');

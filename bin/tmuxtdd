@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 var args = require('minimist')(process.argv);
-var tmuxtdd = require('..');
+var app = require('..');
 var path = require('path');
 var fs = require('fs');
 
@@ -9,10 +9,10 @@ function run(args) {
   var cmd = args.c || args.cmd;
   if (!cmd) {
     console.log('You must specify a command using -c or --cmd');
-    process.exit()
+    process.exit(1)
   }
   var autoKill = args.k || args.kill || false;
-  tmuxtdd.startRunner(watch, 'bash', ['-c', cmd], autoKill);
+  app.startRunner(watch, 'bash', ['-c', cmd], autoKill);
 }
 
 function help() {
@@ -25,7 +25,7 @@ function main(args) {
   if (args.h || args.help) {
     return help();
   } else if (args.status) {
-    return tmuxtdd.printStatus()
+    return app.printStatus()
   } else switch (args._[2]) {
     case 'run':
       return run(args);

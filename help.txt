@@ -1,16 +1,10 @@
-usage: tmuxtdd [--help] [--watch=<pattern[,pattern]>]
+usage: tmuxtdd [--help] [--watch=<pattern[,pattern]>] [--kill]
   <command> [args]
 
-example usage for a javascript project:
+example usage for a javascript test suite:
 
   tmuxtdd run --watch 'src/**/*.js,test/**/*.js' --cmd 'npm test'
 
-tmuxtdd reports test runner status in the status bar in this way:
+example usage for a long-running process (i.e. a server)
 
-  tmux set-option -g status-left "Tests Passing"
-
-after you're done, you can restore your tmux config like so:
-
-  tmux source-file ~/.tmux.conf
-
-Have fun!
+  tmuxtdd run --watch 'src/**/*.js' --cmd 'npm start' --kill
