@@ -42,8 +42,10 @@ module.exports = function (tmuxWindow, cmd, args, autoKill, format) {
           proc.removeAllListeners('exit');
           kill(proc.pid, 'SIGTERM', function(err) {
             if (err) throw err;
-            proc = null;
-            createProc();
+            tmuxWindow.setName(label(2)).then(function() {
+              proc = null;
+              createProc();
+            })
           })
         } else {
           return;

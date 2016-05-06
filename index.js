@@ -8,7 +8,7 @@ var tmux = require('./src/tmux');
 
 module.exports.startRunner = function(watch, cmd, args, autoKill, format) {
   tmux.getInfo().spread(function(paneId, windowId, originalWindowName) {
-    var tmuxWindow = tmux.target(windowId);
+    var tmuxWindow = tmux.getWindow(paneId);
 
     var runner = createRunner(tmuxWindow, cmd, args, autoKill, format)
 
