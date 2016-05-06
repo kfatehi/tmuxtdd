@@ -1,4 +1,3 @@
-var tmux = require('./tmux');
 var kill = require('tree-kill');
 var spawn = require('child_process').spawn;
 var isRunning = require('is-running');
@@ -9,17 +8,17 @@ function running(proc) {
   return proc && isRunning(proc.pid);
 }
 
-module.exports = function (cmd, args, autoKill) {
+module.exports = function (tmuxWindow, cmd, args, autoKill) {
   var proc = null;
   var tooQuick = inhibitor(1000);
 
   function createProc() {
-    tmux.setName('running', function(err) {
+    tmuxWindow.setName('running', function(err) {
       if (err) throw err;
       proc = spawn(cmd, args, { stdio: 'inherit' });
       proc.on('exit', function(status) {
         var str = status === 0 ? 'passing' : 'failing';
-        tmux.setName(str, function() {
+        tmuxWindow.setName(str, function() {
           if (err) throw err;
           proc = null;
         })

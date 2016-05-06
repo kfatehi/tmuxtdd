@@ -7,13 +7,14 @@ var createRunner = require('./src/runner');
 var tmux = require('./src/tmux');
 
 module.exports.startRunner = function(watch, cmd, args, autoKill) {
-  var runner = createRunner(cmd, args, autoKill)
+  tmux.getInfo().spread(function(paneId, windowId, originalWindowName) {
 
-  tmux.getName(function(err, windowName) {
-    if (err) throw err;
+    var tmuxWindow = tmux.target(windowId);
+
+    var runner = createRunner(tmuxWindow, cmd, args, autoKill)
 
     process.on('exit', function() {
-      tmux.setName(windowName, function() {
+      tmuxWindow.setName(originalWindowName, function() {
         process.removeAllListeners('exit');
         process.exit();
       });
@@ -35,5 +36,7 @@ module.exports.startRunner = function(watch, cmd, args, autoKill) {
     } else {
       runner.run()
     }
-  });
+  }).catch(function(err) {
+    throw err
+  })
 }
