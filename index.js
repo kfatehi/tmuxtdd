@@ -12,15 +12,6 @@ module.exports.startRunner = function(watch, cmd, args, autoKill, format) {
 
     var runner = createRunner(tmuxWindow, cmd, args, autoKill, format)
 
-    process.on('exit', function() {
-      tmuxWindow.setName(originalWindowName, function() {
-        process.removeAllListeners('exit');
-        process.exit();
-      });
-    });
-
-    process.on('SIGINT', process.exit);
-
     if (watch) {
       var watcher = chokidar.watch(watch, {
         ignored: /[\/\\]\./,
