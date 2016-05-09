@@ -2,7 +2,7 @@
 module.exports = function(minDurationMilliseconds) {
   var timestamp = null
 
-  // if you call this function again "too quickly", it returns false, otherwise returns false
+  // if you call this function "too quickly", it returns true, otherwise returns false
   return function() {
     var now = new Date()
     if (timestamp) {
