@@ -1,6 +1,6 @@
 {
   "name": "tmuxtdd",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "updates tmux window title with the status of a command which executes when your files change",
   "main": "index.js",
   "scripts": {
