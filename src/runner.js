@@ -2,7 +2,6 @@ var kill = require('tree-kill');
 var spawn = require('child_process').spawn;
 var isRunning = require('is-running');
 var inhibitor = require('./inhibitor');
-var chalk = require('chalk');
 var formatter = require('./formatter');
 
 function running(proc) {
